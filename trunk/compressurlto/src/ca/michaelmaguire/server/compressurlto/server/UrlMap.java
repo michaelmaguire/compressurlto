@@ -11,7 +11,7 @@ public class UrlMap
 {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private String	shorturl;
+	private Long	key;
 
 	@Persistent
 	private String	originalurl;
@@ -25,9 +25,9 @@ public class UrlMap
 		this.date = date;
 	}
 
-	public String getShorturl()
+	public Long getKey()
 	{
-		return shorturl;
+		return key;
 	}
 
 	public String getOriginalurl()
@@ -40,11 +40,6 @@ public class UrlMap
 		return date;
 	}
 
-	public void setShorturl( String shorturl )
-	{
-		this.shorturl = shorturl;
-	}
-
 	public void setOriginalurl( String originalurl )
 	{
 		this.originalurl = originalurl;
@@ -53,5 +48,10 @@ public class UrlMap
 	public void setDate( Date date )
 	{
 		this.date = date;
+	}
+	
+	public String getShortUrl()
+	{
+		return Base36.convertToBase36(key);
 	}
 }
