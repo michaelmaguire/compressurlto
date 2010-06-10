@@ -1,8 +1,5 @@
 package ca.michaelmaguire.server.compressurlto.server;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -24,9 +21,10 @@ public class MapServletImpl extends HttpServlet {
 			HttpServletResponse aResponse) {
 
 		String shortenedUrl = aRequest.getRequestURI();
-		//LOG.info(shortenedUrl);
-		
-		// Skip the initial '/' which is included in getRequestURI() API response.
+		// LOG.info(shortenedUrl);
+
+		// Skip the initial '/' which is included in getRequestURI() API
+		// response.
 		shortenedUrl = shortenedUrl.substring(1);
 
 		long key = Base36.convertFromBase36(shortenedUrl);
@@ -37,7 +35,8 @@ public class MapServletImpl extends HttpServlet {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 
-			UrlMap urlMap = (UrlMap) pm.getObjectById(UrlMap.class, new Long(key));
+			UrlMap urlMap = (UrlMap) pm.getObjectById(UrlMap.class, new Long(
+					key));
 
 			originalUrl = urlMap.getOriginalurl();
 
@@ -48,22 +47,7 @@ public class MapServletImpl extends HttpServlet {
 			pm.close();
 		}
 
-		OutputStream os = null;
-		try {
-			os = aResponse.getOutputStream();
-			String response = "<html><body>" + originalUrl + "</body></html>";
-			os.write(response.getBytes());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				os.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		aResponse.setStatus(aResponse.SC_MOVED_PERMANENTLY);
+		aResponse.addHeader("Location", originalUrl);
 	}
 }
