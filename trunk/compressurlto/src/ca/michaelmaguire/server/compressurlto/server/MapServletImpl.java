@@ -47,7 +47,7 @@ public class MapServletImpl extends HttpServlet {
 			pm.close();
 		}
 
-		aResponse.setStatus(aResponse.SC_MOVED_PERMANENTLY);
+		aResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		aResponse.addHeader("Location", originalUrl);
 	}
 }
