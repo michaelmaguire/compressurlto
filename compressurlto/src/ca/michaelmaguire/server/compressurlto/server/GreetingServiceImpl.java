@@ -1,5 +1,9 @@
 package ca.michaelmaguire.server.compressurlto.server;
 
+import java.util.Date;
+
+import javax.jdo.PersistenceManager;
+
 import ca.michaelmaguire.server.compressurlto.client.GreetingService;
 import ca.michaelmaguire.server.compressurlto.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -23,6 +27,18 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
 
 		String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader( "User-Agent" );
+		
+		UrlMap urlmap = new UrlMap(input, new Date());
+		
+		
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        try {
+            pm.makePersistent(urlmap);
+        } finally {
+            pm.close();
+        }
+		
+		
 		return "Hello, " + input + "!<br><br>I am running " + serverInfo + ".<br><br>It looks like you are using:<br>"
 				+ userAgent;
 	}
