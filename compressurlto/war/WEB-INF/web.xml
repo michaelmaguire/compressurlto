@@ -10,6 +10,11 @@
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>ca.michaelmaguire.server.compressurlto.server.GreetingServiceImpl</servlet-class>
   </servlet>
+
+  <servlet>
+    <servlet-name>mapServlet</servlet-name>
+    <servlet-class>ca.michaelmaguire.server.compressurlto.server.MapServletImpl</servlet-class>
+  </servlet>
   
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
@@ -20,5 +25,10 @@
   <welcome-file-list>
     <welcome-file>Compressurlto.html</welcome-file>
   </welcome-file-list>
+
+  <servlet-mapping>
+    <servlet-name>mapServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
 
 </web-app>
