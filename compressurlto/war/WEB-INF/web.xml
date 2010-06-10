@@ -12,6 +12,11 @@
   </servlet>
 
   <servlet>
+    <servlet-name>createMapServlet</servlet-name>
+    <servlet-class>ca.michaelmaguire.server.compressurlto.server.CreateMapServletImpl</servlet-class>
+  </servlet>
+
+  <servlet>
     <servlet-name>mapServlet</servlet-name>
     <servlet-class>ca.michaelmaguire.server.compressurlto.server.MapServletImpl</servlet-class>
   </servlet>
@@ -20,15 +25,21 @@
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/compressurlto/greet</url-pattern>
   </servlet-mapping>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>Compressurlto.html</welcome-file>
-  </welcome-file-list>
+
+  <servlet-mapping>
+    <servlet-name>createMapServlet</servlet-name>
+    <url-pattern>/compressurlto/create</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>mapServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
 
 </web-app>
