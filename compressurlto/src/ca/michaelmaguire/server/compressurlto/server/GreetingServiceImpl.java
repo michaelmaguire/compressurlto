@@ -39,7 +39,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
 		
 		
-		return "Hello, " + input + "!<br><br>I am running " + serverInfo + ".<br><br>It looks like you are using:<br>"
-				+ userAgent;
+		return "Shortened URL: http://compressurlto.appspot.com/" + urlmap.getShortUrl();
 	}
 }

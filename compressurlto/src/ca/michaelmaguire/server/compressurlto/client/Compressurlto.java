@@ -42,7 +42,7 @@ public class Compressurlto implements EntryPoint
 	{
 		final Button sendButton = new Button( "Send" );
 		final TextBox nameField = new TextBox();
-		nameField.setText( "GWT User" );
+		nameField.setText( "http://www.somelongurl.com/toolong" );
 		final Label errorLabel = new Label();
 
 		// We can add style names to widgets
