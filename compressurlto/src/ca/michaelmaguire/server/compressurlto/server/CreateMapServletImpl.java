@@ -20,6 +20,18 @@ public class CreateMapServletImpl extends HttpServlet {
 			HttpServletResponse aResponse) {
 
 		String longUrl = aRequest.getParameter("url");
+		
+		// Make sure that "thetimes.co.uk " maps to same thing as "thetimes.co.uk"
+		longUrl = longUrl.trim();
+		
+		// If we don't check for this, there is a danger that if a user attempts to create a short
+		// URL for e.g. "www.bob.com", then when we return that URL in the redirect, since it doesn't
+		// start with http://, our server will consider it a relative redirect, and the client will
+		// then attempt to fetch http://compressurlto.appspot.com/www.bob.com which will fail.
+		if( ! longUrl.startsWith("http"))
+		{
+			longUrl = "http://" + longUrl;
+		}
 
 		String shortenedUrl = longUrl; // Default if something goes wrong is
 		// the original URL.
