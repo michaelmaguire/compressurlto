@@ -10,44 +10,63 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * The server side implementation of the RPC service.
  */
-public class MapServletImpl extends HttpServlet {
+public class MapServletImpl extends HttpServlet
+{
 
-	private static final Logger LOG = Logger.getLogger(MapServletImpl.class
-			.getName());
+	private static final Logger	LOG					= Logger.getLogger( MapServletImpl.class.getName() );
 
-	private static final long serialVersionUID = -6584147424779752747L;
+	private static final long	serialVersionUID	= -6584147424779752747L;
 
-	protected void service(HttpServletRequest aRequest,
-			HttpServletResponse aResponse) {
+	protected void service( HttpServletRequest aRequest, HttpServletResponse aResponse )
+	{
 
 		String shortenedUrl = aRequest.getRequestURI();
 		// LOG.info(shortenedUrl);
 
 		// Skip the initial '/' which is included in getRequestURI() API
 		// response.
-		shortenedUrl = shortenedUrl.substring(1);
+		shortenedUrl = shortenedUrl.substring( 1 );
 
-		long key = Base36.convertFromBase36(shortenedUrl);
-		LOG.info("shortenedurl: " + shortenedUrl + " key: " + key);
+		long key = Base36.convertFromBase36( shortenedUrl );
+		LOG.info( "shortenedurl: " + shortenedUrl + " key: " + key );
+		Long longKey = new Long( key );
 
 		String originalUrl = "/ErrorUrlNotFound.html";
 
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
+		// See if it's in the MemCache.
+		String cachedOriginalUrl = UrlMapCache.getOriginalUrlForKey( longKey );
+		if( null != cachedOriginalUrl )
+		{
+			originalUrl = cachedOriginalUrl;
+			// Worked! LOG.info( "MemCache hit! " + longKey + " " + cachedOriginalUrl );
+		}
+		else
+		{
 
-			UrlMap urlMap = (UrlMap) pm.getObjectById(UrlMap.class, new Long(
-					key));
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			try
+			{
 
-			originalUrl = urlMap.getOriginalurl();
+				UrlMap urlMap = (UrlMap) pm.getObjectById( UrlMap.class, longKey );
 
-		} catch (Exception e) {
-			LOG.severe("Problem fetching urlmap: " + e.getLocalizedMessage());
+				originalUrl = urlMap.getOriginalurl();
 
-		} finally {
-			pm.close();
+				// Populate this into the MemCache.
+				UrlMapCache.put( longKey, originalUrl );
+
+			}
+			catch( Exception e )
+			{
+				LOG.severe( "Problem fetching urlmap: " + e.getLocalizedMessage() );
+
+			}
+			finally
+			{
+				pm.close();
+			}
 		}
 
-		aResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-		aResponse.addHeader("Location", originalUrl);
+		aResponse.setStatus( HttpServletResponse.SC_MOVED_PERMANENTLY );
+		aResponse.addHeader( "Location", originalUrl );
 	}
 }
