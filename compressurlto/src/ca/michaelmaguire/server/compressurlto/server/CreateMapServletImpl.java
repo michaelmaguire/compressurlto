@@ -19,7 +19,9 @@ public class CreateMapServletImpl extends HttpServlet {
 	protected void service(HttpServletRequest aRequest,
 			HttpServletResponse aResponse) {
 
-		String longUrl = aRequest.getParameter("url");
+		final String untouchedUrl = aRequest.getParameter("url");
+		
+		String longUrl = untouchedUrl;
 		
 		// Make sure that "thetimes.co.uk " maps to same thing as "thetimes.co.uk"
 		longUrl = longUrl.trim();
@@ -59,7 +61,7 @@ public class CreateMapServletImpl extends HttpServlet {
 			pm.close();
 		}
 
-		String response = "<html><body>Shortened URL: " + BASE_URL
+		String response = "<html><body>Original URL: "+untouchedUrl+" compressed to URL:</p></p>" + BASE_URL
 				+ shortenedUrl + "</body></html>";
 
 		PrintWriter pw = null;
