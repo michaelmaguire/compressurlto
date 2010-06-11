@@ -14,7 +14,7 @@ public class CreateMapServletImpl extends HttpServlet {
 
 	private static final long serialVersionUID = 5722747728473797229L;
 
-	private static final String BASE_URL = "http://compressurlto.appspot.com/";
+	private static final String BASE_URL = "http://curl.to/";
 
 	protected void service(HttpServletRequest aRequest,
 			HttpServletResponse aResponse) {
