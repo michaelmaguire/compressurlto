@@ -10,17 +10,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class CreateMapServletImpl extends HttpServlet
-{
+public class CreateMapServletImpl extends HttpServlet {
 
-	private static final long	serialVersionUID	= 5722747728473797229L;
+	private static final long serialVersionUID = 5722747728473797229L;
 
-	private static final String	BASE_URL			= "http://curl.to/";
+	private static final String BASE_URL = "http://curl.to/";
 
-	protected void service( HttpServletRequest aRequest, HttpServletResponse aResponse )
-	{
+	protected void service(HttpServletRequest aRequest,
+			HttpServletResponse aResponse) {
 
-		final String untouchedUrl = aRequest.getParameter( "url" );
+		final String untouchedUrl = aRequest.getParameter("url");
 
 		String longUrl = untouchedUrl;
 
@@ -36,8 +35,7 @@ public class CreateMapServletImpl extends HttpServlet
 		// and the client will
 		// then attempt to fetch http://compressurlto.appspot.com/www.bob.com
 		// which will fail.
-		if( !longUrl.startsWith( "http" ) )
-		{
+		if (!longUrl.startsWith("http")) {
 			longUrl = "http://" + longUrl;
 		}
 
@@ -45,55 +43,56 @@ public class CreateMapServletImpl extends HttpServlet
 		// the original URL.
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try
-		{
+		try {
 
-			String query = "select from " + UrlMap.class.getName() + " where originalurl == '" + longUrl + "'";
-			List<UrlMap> existingMapList = (List<UrlMap>) pm.newQuery( query ).execute();
+			String query = "select from " + UrlMap.class.getName()
+					+ " where originalurl == '" + longUrl + "'";
+			List<UrlMap> existingMapList = (List<UrlMap>) pm.newQuery(query)
+					.execute();
 
-			UrlMap firstExistingUrlMap = existingMapList.get( 0 );
+			// Based on feedback from AStiles: Rather than depending on
+			// Exception being thrown, add a check
+			// to see if we should create a new map.
+			if (existingMapList.size() == 0) {
+				UrlMap newUrlMap = new UrlMap(longUrl, new Date());
 
-			shortenedUrl = firstExistingUrlMap.getShortUrl();
+				pm.makePersistent(newUrlMap);
 
-		}
-		catch( Exception e )
-		{
-			UrlMap newUrlMap = new UrlMap( longUrl, new Date() );
+				shortenedUrl = newUrlMap.getShortUrl();
+			} else {
 
-			pm.makePersistent( newUrlMap );
+				UrlMap firstExistingUrlMap = existingMapList.get(0);
+
+				shortenedUrl = firstExistingUrlMap.getShortUrl();
+			}
+		} catch (Exception e) {
+			UrlMap newUrlMap = new UrlMap(longUrl, new Date());
+
+			pm.makePersistent(newUrlMap);
 
 			// Populate this into the MemCache.
-			UrlMapCache.put( newUrlMap.getKey(), longUrl );
+			UrlMapCache.put(newUrlMap.getKey(), longUrl);
 
 			shortenedUrl = newUrlMap.getShortUrl();
 
-		}
-		finally
-		{
+		} finally {
 			pm.close();
 		}
 
-		String response = "<html><body>Original URL: " + untouchedUrl + " compressed to URL:</p></p>" + BASE_URL
-				+ shortenedUrl + "</body></html>";
+		String response = "<html><body>Original URL: " + untouchedUrl
+				+ " compressed to URL:</p></p>" + BASE_URL + shortenedUrl
+				+ "</body></html>";
 
 		PrintWriter pw = null;
-		try
-		{
+		try {
 			pw = aResponse.getWriter();
-			pw.write( response );
-		}
-		catch( IOException e )
-		{
+			pw.write(response);
+		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				pw.close();
-			}
-			catch( Exception e )
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
