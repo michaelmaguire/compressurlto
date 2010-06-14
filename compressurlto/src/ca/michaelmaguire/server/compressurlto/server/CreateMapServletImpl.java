@@ -14,8 +14,6 @@ public class CreateMapServletImpl extends HttpServlet {
 
 	private static final long serialVersionUID = 5722747728473797229L;
 
-	private static final String BASE_URL = "http://curl.to/";
-
 	protected void service(HttpServletRequest aRequest,
 			HttpServletResponse aResponse) {
 
@@ -80,7 +78,7 @@ public class CreateMapServletImpl extends HttpServlet {
 		}
 
 		String response = "<html><body>Original URL: " + untouchedUrl
-				+ " compressed to URL:</p></p>" + BASE_URL + shortenedUrl
+				+ " compressed to URL:</p></p>" + shortenedUrl
 				+ "</body></html>";
 
 		PrintWriter pw = null;
